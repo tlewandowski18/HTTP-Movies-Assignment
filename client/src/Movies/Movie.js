@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import { useRouteMatch } from 'react-router-dom';
 import MovieCard from './MovieCard';
-import { checkPropTypes } from 'prop-types';
 
 function Movie(props) {
   const [movie, setMovie] = useState(null);
@@ -25,6 +23,16 @@ function Movie(props) {
     props.history.push(`/update-movie/${movie.id}`)
   }
 
+  const deleteMovie = () => {
+    axios.delete(`http://localhost:5000/api/movies/${movie.id}`)
+      .then(res => {
+        console.log(res)
+        props.setMovieList(props.movies.filter(item => item.id !== movie.id))
+        props.history.push("/")
+      })
+      .catch(err => console.log(err))
+  }
+
   useEffect(() => {
     fetchMovie(match.params.id);
   }, [match.params.id]);
@@ -42,6 +50,9 @@ function Movie(props) {
       </div>
       <div className='update-button' onClick={updateMovie}>
         Update
+      </div>
+      <div className='delete-button' onClick={deleteMovie}>
+        Delete
       </div>
     </div>
   );
